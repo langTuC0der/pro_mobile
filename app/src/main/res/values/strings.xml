@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mobile_APP</string>
     <string name="taker_logo_description">Biểu tượng nhãn hàng Taker</string>
+    <string name="taker_tagline">Mái hiên AI - Nâng tầm giá trị</string>
 </resources>
