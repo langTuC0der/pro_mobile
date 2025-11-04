@@ -37,4 +37,8 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
+    //Dung Dev
+    implementation libs.core
+    implementation libs.zxing.android.embedded
 }
