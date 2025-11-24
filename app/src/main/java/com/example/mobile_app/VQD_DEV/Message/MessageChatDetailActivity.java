@@ -20,6 +20,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.List;
+
 public class MessageChatDetailActivity extends AppCompatActivity {
 
     private ImageView vqd_btn_back_chat;
@@ -29,24 +31,28 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     private EditText editTextMessage;
     private ImageView btnSend;
 
-    // --- LƯU Ý: TẠO KEY MỚI VÀ DÁN VÀO ĐÂY ---
     private static final String GEMINI_API_KEY = "AIzaSyDEUmi8cbokC2fBUJixjpsOlkRobQoeX3o";
 
     private GenerativeModelFutures model;
+    private AppDatabase db; // Khai báo Database
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vqd_message_activity_chat_detail);
 
-        // --- SỬA QUAN TRỌNG: Đổi tên model thành gemini-1.5-flash ---
-        GenerativeModel gm = new GenerativeModel("gemini-1.0-pro", GEMINI_API_KEY);
+        // 1. Khởi tạo Database
+        db = AppDatabase.getDatabase(this);
+
+        // 2. Giữ nguyên Gemini 2.0 Flash như bạn yêu cầu
+        GenerativeModel gm = new GenerativeModel("gemini-2.0-flash", GEMINI_API_KEY);
         model = GenerativeModelFutures.from(gm);
 
         initViews();
         setupEvents();
 
-        addBotMessage("Xin chào! Tôi là trợ lý AI Gemini (Flash). Tôi có thể giúp gì cho bạn? 😊");
+        // 3. Load lịch sử chat cũ từ Database
+        loadChatHistory();
     }
 
     private void initViews() {
@@ -56,6 +62,30 @@ public class MessageChatDetailActivity extends AppCompatActivity {
         chatContainer = findViewById(R.id.chatContainer);
         editTextMessage = findViewById(R.id.editTextMessage);
         btnSend = findViewById(R.id.btnSend);
+
+        String name = getIntent().getStringExtra("chat_name");
+        if (name != null) chat_title.setText(name);
+    }
+
+    // Hàm load tin nhắn từ SQL
+    private void loadChatHistory() {
+        List<ChatMessage> history = db.chatDao().getAllMessages();
+
+        if (history.isEmpty()) {
+            // Chưa có tin nhắn nào -> Hiện lời chào và lưu vào DB
+            String welcome = "Xin chào! Tôi là trợ lý AI Gemini (Flash). Tôi có thể giúp gì cho bạn? 😊";
+            addBotMessageUI(welcome);
+            saveMessageToDB(welcome, false);
+        } else {
+            // Đã có tin nhắn -> Hiển thị lại toàn bộ
+            for (ChatMessage msg : history) {
+                if (msg.isUser) {
+                    addUserMessageUI(msg.message);
+                } else {
+                    addBotMessageUI(msg.message);
+                }
+            }
+        }
     }
 
     private void setupEvents() {
@@ -68,50 +98,50 @@ public class MessageChatDetailActivity extends AppCompatActivity {
                 return;
             }
 
-            // 1. Hiện tin nhắn User
-            addUserMessage(userMessage);
+            // A. Hiện và Lưu tin nhắn User
+            addUserMessageUI(userMessage);
+            saveMessageToDB(userMessage, true); // true = User
+
             editTextMessage.setText("");
 
-            // 2. Gọi AI
+            // B. Gọi AI
             sendMessageToGemini(userMessage);
         });
     }
 
     private void sendMessageToGemini(String message) {
-        Content content = new Content.Builder()
-                .addText(message)
-                .build();
-
+        Content content = new Content.Builder().addText(message).build();
         ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
 
         Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
             @Override
             public void onSuccess(GenerateContentResponse result) {
                 String botResponse = result.getText();
-                runOnUiThread(() -> addBotMessage(botResponse));
+                runOnUiThread(() -> {
+                    // C. Hiện và Lưu tin nhắn Bot
+                    addBotMessageUI(botResponse);
+                    saveMessageToDB(botResponse, false); // false = Bot
+                });
             }
 
             @Override
             public void onFailure(Throwable t) {
-                // In lỗi chi tiết ra Logcat để debug
                 t.printStackTrace();
-
                 runOnUiThread(() -> {
-                    // Hiển thị lý do lỗi cụ thể lên màn hình để bạn dễ biết
-                    String errorMsg = t.getMessage();
-                    if (errorMsg != null && errorMsg.contains("404")) {
-                        addBotMessage("Lỗi 404: Sai tên Model. Hãy đổi sang gemini-1.5-flash");
-                    } else if (errorMsg != null && errorMsg.contains("403")) {
-                        addBotMessage("Lỗi 403: Sai API Key hoặc bị chặn quốc gia.");
-                    } else {
-                        addBotMessage("Lỗi kết nối: " + errorMsg);
-                    }
+                    String errorMsg = "⚠️ Lỗi hệ thống: " + t.getMessage();
+                    addBotMessageUI(errorMsg);
+                    // Lỗi thì không cần lưu vào DB cũng được, hoặc lưu tùy bạn
                 });
             }
         }, mainExecutor);
     }
 
-    private void addUserMessage(String message) {
+    // Hàm lưu vào Database cho gọn code
+    private void saveMessageToDB(String message, boolean isUser) {
+        db.chatDao().insertMessage(new ChatMessage(message, isUser));
+    }
+
+    private void addUserMessageUI(String message) {
         View messageView = LayoutInflater.from(this).inflate(R.layout.item_message_user, chatContainer, false);
         TextView textView = messageView.findViewById(R.id.text_message_user);
         textView.setText(message);
@@ -119,7 +149,7 @@ public class MessageChatDetailActivity extends AppCompatActivity {
         scrollToBottom();
     }
 
-    private void addBotMessage(String message) {
+    private void addBotMessageUI(String message) {
         View messageView = LayoutInflater.from(this).inflate(R.layout.item_message_bot, chatContainer, false);
         TextView textView = messageView.findViewById(R.id.text_message_bot);
         textView.setText(message);

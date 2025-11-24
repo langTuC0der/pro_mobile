@@ -35,7 +35,7 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
-    implementation libs.generativeai
+    implementation libs.room.common.jvm
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
@@ -45,11 +45,16 @@ dependencies {
     implementation libs.zxing.android.embedded
 
     // Gemini AI SDK - THÊM MỚI
-    implementation 'com.google.ai.client.generativeai:generativeai:0.7.0'
+    implementation libs.generativeai
 
     // Các thư viện hỗ trợ
-    implementation 'com.google.guava:guava:31.1-android' // Bản mới hơn chút
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
-    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation libs.guava // Bản mới hơn chút
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.cardview
+
+    // SQL
+    def room_version = "2.5.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 }
