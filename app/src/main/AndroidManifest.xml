@@ -14,16 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobile_APP">
         <activity
-            android:name=".VQD_DEV.Wallet.activities.HomeActivity"
+            android:name=".VQD_DEV.Wallet.VqdMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".VQD_DEV.Wallet.activities.RegisterFundActivity" />
+        <activity
+            android:name=".VQD_DEV.Wallet.RegisterFundActivity"
+            android:exported="false" />
 
+        <activity
+            android:name=".VQD_DEV.Wallet.VqdActivityNapTien"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -5,14 +5,14 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:padding="24dp"
-    android:background="@drawable/vqd_dialog_white_bg">
+    android:background="@drawable/vqd_square_white_bg">
 
     <!-- 1. Icon dấu tích xanh -->
 <ImageView
 android:id="@+id/img_success_icon"
 android:layout_width="72dp"
 android:layout_height="72dp"
-android:src="@drawable/ic_check_circle_green" />
+android:src="@drawable/ic_vqd_check_circle_green" />
 <TextView
 android:id="@+id/tv_success_message"
 android:layout_width="wrap_content"
