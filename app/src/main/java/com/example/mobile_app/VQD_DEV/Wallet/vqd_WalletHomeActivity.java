@@ -10,7 +10,7 @@ import com.example.mobile_app.R;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class HomeActivity extends AppCompatActivity {
+public class vqd_WalletHomeActivity extends AppCompatActivity {
 
     private TextView tvFundName; // Chữ "Số dư (đ)"
     private TextView tvBalance;  // Số tiền to
@@ -22,7 +22,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.vqd_activity_home);
+        setContentView(R.layout.vqd_wallet_activity_home);
 
         initViews();
         setupEvents();
@@ -45,12 +45,12 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupEvents() {
         btnRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, RegisterFundActivity.class);
+            Intent intent = new Intent(vqd_WalletHomeActivity.this, vqd_WalletRegisterFundActivity.class);
             startActivity(intent);
         });
 
         btnTopUp.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, VqdActivityNapTien.class);
+            Intent intent = new Intent(vqd_WalletHomeActivity.this, vqd_WalletNapTienActivity.class);
             startActivity(intent);
         });
 

@@ -70,7 +70,7 @@ public class VqdMainActivity extends AppCompatActivity {
         switch (tabIndex) {
             case 1:
                 // Mặc định gọi FragmentHome (Tab 1)
-                selectedFragment = new FragmentHome();
+                //selectedFragment = new FragmentHome();
                 break;
             case 2:
                 // Đơn hàng (Tạm thời chưa có thì để null hoặc tạo FragmentOrder sau)
@@ -79,7 +79,7 @@ public class VqdMainActivity extends AppCompatActivity {
             case 3:
                 // YÊU CẦU CỦA BẠN: Hiện ra Ví Taker (chính là HomeActivity cũ)
                 // Ta dùng FragmentWallet vì nó chứa giao diện của HomeActivity
-                selectedFragment = new FragmentWallet();
+                //selectedFragment = new FragmentWallet();
                 break;
             case 4:
                 // Trò chuyện

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.mobile_app.R;
 
-public class RegisterFundActivity extends AppCompatActivity {
+public class vqd_WalletRegisterFundActivity extends AppCompatActivity {
 
     private ImageView btnBack;
     private RelativeLayout rlSelectService;
@@ -40,7 +39,7 @@ public class RegisterFundActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.vqd_activity_register_fund);
+        setContentView(R.layout.vqd_wallet_activity_register_fund);
 
         initViews();
         setupImagePicker(); // Cấu hình bộ chọn ảnh
@@ -105,7 +104,7 @@ public class RegisterFundActivity extends AppCompatActivity {
     private void showServiceDialog() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.vqd_dialog_full_service);
+        dialog.setContentView(R.layout.vqd_wallet_dialog_full_service);
 
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

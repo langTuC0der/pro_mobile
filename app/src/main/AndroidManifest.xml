@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,20 +15,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobile_APP">
         <activity
-            android:name=".VQD_DEV.Wallet.VqdMainActivity"
+            android:name=".VQD_DEV.Message.MessageChatDetailActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity>\
+
         <activity
-            android:name=".VQD_DEV.Wallet.RegisterFundActivity"
+            android:name=".VQD_DEV.Wallet.vqd_WalletHomeActivity"
             android:exported="false" />
 
         <activity
-            android:name=".VQD_DEV.Wallet.VqdActivityNapTien"
+            android:name=".VQD_DEV.Wallet.vqd_WalletRegisterFundActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".VQD_DEV.Wallet.vqd_WalletNapTienActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".VQD_DEV.Message.MessageTabChatActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

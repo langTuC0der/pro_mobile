@@ -20,7 +20,7 @@ import com.example.mobile_app.R;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class VqdActivityNapTien extends AppCompatActivity {
+public class vqd_WalletNapTienActivity extends AppCompatActivity {
 
     private ImageView vqdImgBack;
     private TextView vqdTv100k, vqdTv200k, vqdTv300k, vqdTv500k, vqdTv1m, vqdTv2m;
@@ -36,7 +36,7 @@ public class VqdActivityNapTien extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.vqd_activity_nap_tien);
+        setContentView(R.layout.vqd_wallet_activity_nap_tien);
 
         initViews();
         setupFormat();
