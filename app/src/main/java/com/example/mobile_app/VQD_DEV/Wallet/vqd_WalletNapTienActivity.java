@@ -26,7 +26,7 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
     private TextView vqdTv100k, vqdTv200k, vqdTv300k, vqdTv500k, vqdTv1m, vqdTv2m;
     private EditText vqdEdtMoneyInput;
     private TextView vqdTvAmountDisplay, vqdTvFeeDisplay, vqdTvTotalDisplay;
-    private LinearLayout vqdLayoutQrSection, vqdLayoutPaymentInfo; // Thêm biến cho layout info
+    private LinearLayout vqdLayoutQrSection, vqdLayoutPaymentInfo;
     private AppCompatButton vqdBtnContinue;
     private TextView[] moneyOptions;
     private DecimalFormat decimalFormat;
@@ -41,8 +41,6 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
         initViews();
         setupFormat();
         setupEvents();
-
-        // Gọi reset ngay khi vào để hiện 0đ và ẩn QR
         resetUI();
     }
 
@@ -62,8 +60,6 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
         vqdTvTotalDisplay = findViewById(R.id.vqd_tv_total_display);
 
         vqdLayoutQrSection = findViewById(R.id.vqd_layout_qr_section);
-
-        // --- QUAN TRỌNG: Thêm dòng ánh xạ này ---
         vqdLayoutPaymentInfo = findViewById(R.id.vqd_layout_payment_info);
 
         vqdBtnContinue = findViewById(R.id.vqd_btn_continue);
@@ -76,6 +72,7 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
     }
 
     private void setupEvents() {
+        // Nút Back: finish() là đủ để quay về Fragment Ví
         vqdImgBack.setOnClickListener(v -> finish());
 
         View.OnClickListener optionListener = view -> {
@@ -119,29 +116,20 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
         vqdBtnContinue.setOnClickListener(v -> showSuccessDialog());
     }
 
-    // Hàm Reset: Đưa về trạng thái ban đầu (Trắng, 0đ, Ẩn QR)
     private void resetUI() {
         currentSelectedAmount = 0;
-
-        // Thay vì ẩn (INVISIBLE), ta set lại text về 0đ
         vqdTvAmountDisplay.setText("0đ");
         vqdTvFeeDisplay.setText("0đ");
         vqdTvTotalDisplay.setText("0đ");
 
-        // Đảm bảo các View này luôn hiện (trong trường hợp bị ẩn trước đó)
         vqdTvAmountDisplay.setVisibility(View.VISIBLE);
         vqdTvFeeDisplay.setVisibility(View.VISIBLE);
         vqdTvTotalDisplay.setVisibility(View.VISIBLE);
 
-        if (vqdLayoutPaymentInfo != null) {
-            vqdLayoutPaymentInfo.setVisibility(View.VISIBLE);
-        }
+        if (vqdLayoutPaymentInfo != null) vqdLayoutPaymentInfo.setVisibility(View.VISIBLE);
 
-        // Chỉ ẩn QR Code thôi
         vqdLayoutQrSection.setVisibility(View.GONE);
         updateButtonState(false);
-
-        // Đặt tất cả nút về màu trắng
         for (TextView tv : moneyOptions) tv.setBackgroundResource(R.drawable.vqd_square_white_bg);
     }
 
@@ -183,6 +171,7 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
 
         AppCompatButton btnHome = dialog.findViewById(R.id.btn_go_home);
         btnHome.setOnClickListener(v -> {
+            // Lưu tiền vào SharedPreferences
             SharedPreferences prefs = getSharedPreferences("ViTakerPrefs", MODE_PRIVATE);
             long oldBalance = prefs.getLong("user_balance", 0);
             long newBalance = oldBalance + currentSelectedAmount;
@@ -192,7 +181,7 @@ public class vqd_WalletNapTienActivity extends AppCompatActivity {
             editor.apply();
 
             dialog.dismiss();
-            finish();
+            finish(); // Đóng màn hình nạp tiền -> Quay về Fragment Ví -> Tự cập nhật số dư mới
         });
         dialog.show();
     }

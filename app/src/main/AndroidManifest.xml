@@ -23,12 +23,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".VQD_DEV.Message.MessageTabChatActivity" android:exported="false" />
         <activity android:name=".VQD_DEV.Message.MessageChatDetailActivity" android:exported="false" />
-
-        <activity android:name=".VQD_DEV.Wallet.vqd_WalletHomeActivity" android:exported="false" />
         <activity android:name=".VQD_DEV.Wallet.vqd_WalletRegisterFundActivity" android:exported="false" />
         <activity android:name=".VQD_DEV.Wallet.vqd_WalletNapTienActivity" android:exported="false" />
-
+        <activity android:name=".VQD_DEV.Message.MessageCallDetailActivity" />
     </application>
 </manifest>

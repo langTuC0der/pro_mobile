@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F5F5F5"
-    tools:context=".VQD_DEV.Wallet.vqd_WalletHomeActivity">
+    tools:context=".VQD_DEV.Wallet.vqd_WalletHomeFragment">
 
     <TextView
         android:id="@+id/tv_title"
@@ -24,36 +24,38 @@
         android:id="@+id/card_view_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp" app:cardBackgroundColor="#00B14F"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="#00B14F"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/tv_fund_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textSize="14sp"
+                android:alpha="0.9"
+                android:text="Số dư (đ)"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Số dư (đ)" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:textColor="@android:color/white"
                 android:textSize="32sp"
                 android:textStyle="bold"
+                android:text="0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_fund_name"
-                tools:text="5.298.000" />
+                app:layout_constraintTop_toBottomOf="@id/tv_fund_name" />
 
             <TextView
                 android:id="@+id/tv_status"
@@ -65,18 +67,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_balance"
-                tools:text="Số tiền cần duy trì tối thiểu 200.000đ" />
-
+                tools:text="Trạng thái..." />
 
             <TextView
                 android:id="@+id/btn_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/vqd_button_green_bg"
+                android:backgroundTint="@android:color/white"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
                 android:text="Đăng ký ngay"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textColor="#00B14F"
+                android:textSize="14sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_status" />
@@ -85,11 +91,12 @@
                 android:id="@+id/btn_top_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="Nạp tiền"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_status" />
@@ -98,11 +105,12 @@
                 android:id="@+id/btn_withdraw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Yêu cầu rút tiền"
+                android:layout_marginTop="24dp"
+                android:text="Rút tiền"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_status" />

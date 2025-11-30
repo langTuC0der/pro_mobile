@@ -1,5 +1,6 @@
 package com.example.mobile_app.VQD_DEV.Message;
 
+import android.content.Intent; // Đã thêm import Intent
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,27 +32,28 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     private EditText editTextMessage;
     private ImageView btnSend;
 
+    // Khai báo nút gọi điện
+    private ImageView btn_voice_call;
+
     private static final String GEMINI_API_KEY = "AIzaSyDEUmi8cbokC2fBUJixjpsOlkRobQoeX3o";
 
     private GenerativeModelFutures model;
-    private AppDatabase db; // Khai báo Database
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.vqd_message_activity_chat_detail);
 
-        // 1. Khởi tạo Database
+        ((AppCompatActivity) this).setContentView(R.layout.vqd_message_activity_chat_detail);
+
         db = AppDatabase.getDatabase(this);
 
-        // 2. Giữ nguyên Gemini 2.0 Flash như bạn yêu cầu
         GenerativeModel gm = new GenerativeModel("gemini-2.0-flash", GEMINI_API_KEY);
         model = GenerativeModelFutures.from(gm);
 
         initViews();
         setupEvents();
 
-        // 3. Load lịch sử chat cũ từ Database
         loadChatHistory();
     }
 
@@ -63,21 +65,21 @@ public class MessageChatDetailActivity extends AppCompatActivity {
         editTextMessage = findViewById(R.id.editTextMessage);
         btnSend = findViewById(R.id.btnSend);
 
+        // Ánh xạ nút gọi (ID phải khớp với file XML chat detail đã sửa)
+        btn_voice_call = findViewById(R.id.btn_voice_call);
+
         String name = getIntent().getStringExtra("chat_name");
         if (name != null) chat_title.setText(name);
     }
 
-    // Hàm load tin nhắn từ SQL
     private void loadChatHistory() {
         List<ChatMessage> history = db.chatDao().getAllMessages();
 
         if (history.isEmpty()) {
-            // Chưa có tin nhắn nào -> Hiện lời chào và lưu vào DB
             String welcome = "Xin chào! Tôi là trợ lý AI Gemini (Flash). Tôi có thể giúp gì cho bạn? 😊";
             addBotMessageUI(welcome);
             saveMessageToDB(welcome, false);
         } else {
-            // Đã có tin nhắn -> Hiển thị lại toàn bộ
             for (ChatMessage msg : history) {
                 if (msg.isUser) {
                     addUserMessageUI(msg.message);
@@ -89,24 +91,37 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     }
 
     private void setupEvents() {
+        // Nút Back
         vqd_btn_back_chat.setOnClickListener(v -> finish());
 
+        // Nút Gửi tin nhắn
         btnSend.setOnClickListener(v -> {
             String userMessage = editTextMessage.getText().toString().trim();
             if (userMessage.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập tin nhắn", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // A. Hiện và Lưu tin nhắn User
             addUserMessageUI(userMessage);
-            saveMessageToDB(userMessage, true); // true = User
-
+            saveMessageToDB(userMessage, true);
             editTextMessage.setText("");
-
-            // B. Gọi AI
             sendMessageToGemini(userMessage);
         });
+
+        // --- SỰ KIỆN MỚI: Bấm nút gọi -> Chuyển sang màn hình Gọi ---
+        if (btn_voice_call != null) {
+            btn_voice_call.setOnClickListener(v -> {
+                // 1. LƯU TRẠNG THÁI: Đã thực hiện cuộc gọi
+                getSharedPreferences("ChatPrefs", MODE_PRIVATE)
+                        .edit()
+                        .putBoolean("is_call_visible", true)
+                        .apply();
+
+                // 2. Chuyển màn hình
+                Intent intent = new Intent(MessageChatDetailActivity.this, MessageCallDetailActivity.class);
+                intent.putExtra("caller_name", chat_title.getText().toString());
+                startActivity(intent);
+            });
+        }
     }
 
     private void sendMessageToGemini(String message) {
@@ -118,9 +133,8 @@ public class MessageChatDetailActivity extends AppCompatActivity {
             public void onSuccess(GenerateContentResponse result) {
                 String botResponse = result.getText();
                 runOnUiThread(() -> {
-                    // C. Hiện và Lưu tin nhắn Bot
                     addBotMessageUI(botResponse);
-                    saveMessageToDB(botResponse, false); // false = Bot
+                    saveMessageToDB(botResponse, false);
                 });
             }
 
@@ -130,13 +144,11 @@ public class MessageChatDetailActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     String errorMsg = "⚠️ Lỗi hệ thống: " + t.getMessage();
                     addBotMessageUI(errorMsg);
-                    // Lỗi thì không cần lưu vào DB cũng được, hoặc lưu tùy bạn
                 });
             }
         }, mainExecutor);
     }
 
-    // Hàm lưu vào Database cho gọn code
     private void saveMessageToDB(String message, boolean isUser) {
         db.chatDao().insertMessage(new ChatMessage(message, isUser));
     }

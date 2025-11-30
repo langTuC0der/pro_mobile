@@ -48,14 +48,15 @@
             android:layout_marginStart="12dp"/>
 
         <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:id="@+id/btn_voice_call"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:src="@android:drawable/ic_menu_call"
             app:tint="#00B14F"
             android:layout_marginEnd="16dp"/>
         <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:src="@android:drawable/ic_menu_camera"
             app:tint="#00B14F"/>
     </LinearLayout>

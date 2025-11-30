@@ -1,7 +1,6 @@
 package com.example.mobile_app.VQD_DEV.Wallet;
 
 import android.app.Dialog;
-// Đã xóa import SharedPreferences vì không dùng nữa
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -41,6 +40,7 @@ public class vqd_WalletRegisterFundActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vqd_wallet_activity_register_fund);
+
         initViews();
         setupImagePicker();
         setupEvents();
@@ -69,7 +69,9 @@ public class vqd_WalletRegisterFundActivity extends AppCompatActivity {
     }
 
     private void setupEvents() {
+        // Nút Back: Chỉ cần finish() là nó tự lùi về Fragment Ví
         btnBack.setOnClickListener(v -> finish());
+
         rlSelectService.setOnClickListener(v -> showServiceDialog());
         btnUpload.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
 
@@ -83,9 +85,6 @@ public class vqd_WalletRegisterFundActivity extends AppCompatActivity {
     }
 
     private void showServiceDialog() {
-        // (Giữ nguyên code phần dialog chọn dịch vụ để tiết kiệm chỗ hiển thị)
-        // ... Code dialog cũ ...
-        // Bạn copy lại đoạn Dialog chọn dịch vụ ở tin nhắn trước nếu cần, đoạn đó ko đổi gì
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.vqd_wallet_dialog_full_service);
@@ -124,10 +123,8 @@ public class vqd_WalletRegisterFundActivity extends AppCompatActivity {
 
         AppCompatButton btnGoHome = dialog.findViewById(R.id.btn_go_home);
         btnGoHome.setOnClickListener(v -> {
-
-            // --- CHỈ CẦN LƯU VÀO DATABASE ---
-            // Việc kiểm tra sau này sẽ do Database lo
             try {
+                // Lưu vào Database
                 String serviceName = tvSelectService.getText().toString();
                 AppDatabase.WalletItem newItem = new AppDatabase.WalletItem(serviceName, tempUriString);
                 AppDatabase.getDatabase(this).walletDao().insertWallet(newItem);
@@ -138,7 +135,7 @@ public class vqd_WalletRegisterFundActivity extends AppCompatActivity {
             }
 
             dialog.dismiss();
-            finish();
+            finish(); // Đóng Activity -> Về Main -> Fragment Ví tự reload
         });
 
         dialog.show();
