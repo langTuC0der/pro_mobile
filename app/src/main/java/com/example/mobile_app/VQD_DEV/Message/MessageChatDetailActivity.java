@@ -142,7 +142,7 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     }
 
     private void addUserMessageUI(String message) {
-        View messageView = LayoutInflater.from(this).inflate(R.layout.item_message_user, chatContainer, false);
+        View messageView = LayoutInflater.from(this).inflate(R.layout.vqd_item_message_user, chatContainer, false);
         TextView textView = messageView.findViewById(R.id.text_message_user);
         textView.setText(message);
         chatContainer.addView(messageView);
@@ -150,7 +150,7 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     }
 
     private void addBotMessageUI(String message) {
-        View messageView = LayoutInflater.from(this).inflate(R.layout.item_message_bot, chatContainer, false);
+        View messageView = LayoutInflater.from(this).inflate(R.layout.vqd_item_message_bot, chatContainer, false);
         TextView textView = messageView.findViewById(R.id.text_message_bot);
         textView.setText(message);
         chatContainer.addView(messageView);

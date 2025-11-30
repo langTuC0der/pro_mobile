@@ -15,9 +15,11 @@
     <LinearLayout
         android:id="@+id/vqd_bottom_nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="65dp"
         android:layout_alignParentBottom="true"
-        android:background="#333333"
+        android:background="#FFFFFF"
+        android:baselineAligned="false"
+        android:elevation="10dp"
         android:orientation="horizontal"
         android:weightSum="5">
 
@@ -27,23 +29,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/nav_icon_1"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_view"
-                app:tint="@android:color/white" />
-            <TextView
-                android:id="@+id/nav_text_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trang chủ"
-                android:textSize="10sp"
-                android:textColor="@android:color/white" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/ic_vqd_trangchu"
+                app:tint="#888888" />
         </LinearLayout>
 
         <LinearLayout
@@ -52,23 +48,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/nav_icon_2"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_agenda"
-                app:tint="@android:color/white" />
-            <TextView
-                android:id="@+id/nav_text_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đơn hàng"
-                android:textSize="10sp"
-                android:textColor="@android:color/white" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/ic_vqd_donhang"
+                app:tint="#888888" />
         </LinearLayout>
 
         <LinearLayout
@@ -77,25 +67,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
             android:clickable="true"
             android:focusable="true"
-            android:background="@drawable/vqd_green_to_white_gradient">
+            android:background="?attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/nav_icon_3"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_my_calendar"
-                app:tint="@android:color/white" />
-            <TextView
-                android:id="@+id/nav_text_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ví Taker"
-                android:textSize="10sp"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:src="@drawable/ic_vqd_vitanker"
+                app:tint="#2E7D32" />
         </LinearLayout>
 
         <LinearLayout
@@ -104,23 +86,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/nav_icon_4"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_send"
-                app:tint="@android:color/white" />
-            <TextView
-                android:id="@+id/nav_text_4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trò chuyện"
-                android:textSize="10sp"
-                android:textColor="@android:color/white" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/ic_vqd_trochuyen"
+                app:tint="#888888" />
         </LinearLayout>
 
         <LinearLayout
@@ -129,23 +105,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/nav_icon_5"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_myplaces"
-                app:tint="@android:color/white" />
-            <TextView
-                android:id="@+id/nav_text_5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cá nhân"
-                android:textSize="10sp"
-                android:textColor="@android:color/white" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:src="@drawable/ic_vqd_canhan"
+                app:tint="#888888" />
         </LinearLayout>
 
     </LinearLayout>

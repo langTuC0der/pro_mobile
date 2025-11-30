@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Mobile_APP">
 
         <activity
-            android:name=".VQD_DEV.Message.MessageTabChatActivity"
+            android:name=".VQD_DEV.Wallet.VqdMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,9 +23,8 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".VQD_DEV.Message.MessageChatDetailActivity"
-            android:exported="false" />
+        <activity android:name=".VQD_DEV.Message.MessageTabChatActivity" android:exported="false" />
+        <activity android:name=".VQD_DEV.Message.MessageChatDetailActivity" android:exported="false" />
 
         <activity android:name=".VQD_DEV.Wallet.vqd_WalletHomeActivity" android:exported="false" />
         <activity android:name=".VQD_DEV.Wallet.vqd_WalletRegisterFundActivity" android:exported="false" />
