@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".VQD_DEV.Wallet.activities.RegisterFundActivity">
+    tools:context=".VQD_DEV.Wallet.vqd_WalletRegisterFundActivity">
 
     <RelativeLayout
         android:id="@+id/header_layout"
@@ -246,7 +246,7 @@
                             android:textAlignment="center"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
-                            tools:text="Ngân hàng: ARGIBANK\nSTK: 4000201016209\nChủ TK: Mặt Trận Tổ Quốc" />
+                            android:text="Ngân hàng: ARGIBANK\nSTK: 4000201016209\nChủ TK: Mặt Trận Tổ Quốc" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

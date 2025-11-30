@@ -1,6 +1,6 @@
 package com.example.mobile_app.VQD_DEV.Message;
 
-import android.content.Intent; // Đã thêm import Intent
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +31,6 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     private LinearLayout chatContainer;
     private EditText editTextMessage;
     private ImageView btnSend;
-
-    // Khai báo nút gọi điện
     private ImageView btn_voice_call;
 
     private static final String GEMINI_API_KEY = "AIzaSyDEUmi8cbokC2fBUJixjpsOlkRobQoeX3o";
@@ -40,10 +38,14 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     private GenerativeModelFutures model;
     private AppDatabase db;
 
+    // [QUAN TRỌNG] Biến lưu tên người đang chat (VD: "AI Bot Gemini" hoặc "Lê Văn A")
+    private String currentChatName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Sửa lỗi tương thích Activity (như bạn từng gặp)
         ((AppCompatActivity) this).setContentView(R.layout.vqd_message_activity_chat_detail);
 
         db = AppDatabase.getDatabase(this);
@@ -54,6 +56,7 @@ public class MessageChatDetailActivity extends AppCompatActivity {
         initViews();
         setupEvents();
 
+        // Load lịch sử chat THEO TÊN NGƯỜI
         loadChatHistory();
     }
 
@@ -64,19 +67,33 @@ public class MessageChatDetailActivity extends AppCompatActivity {
         chatContainer = findViewById(R.id.chatContainer);
         editTextMessage = findViewById(R.id.editTextMessage);
         btnSend = findViewById(R.id.btnSend);
-
-        // Ánh xạ nút gọi (ID phải khớp với file XML chat detail đã sửa)
         btn_voice_call = findViewById(R.id.btn_voice_call);
 
-        String name = getIntent().getStringExtra("chat_name");
-        if (name != null) chat_title.setText(name);
+        // [QUAN TRỌNG] Lấy tên người chat từ Intent
+        currentChatName = getIntent().getStringExtra("chat_name");
+
+        // Nếu không có tên (lỗi) thì mặc định là Gemini
+        if (currentChatName == null || currentChatName.isEmpty()) {
+            currentChatName = "AI Bot Gemini";
+        }
+
+        // Hiển thị tên lên thanh tiêu đề
+        chat_title.setText(currentChatName);
     }
 
     private void loadChatHistory() {
-        List<ChatMessage> history = db.chatDao().getAllMessages();
+        // [SỬA ĐỔI] Thay vì getAllMessages(), giờ chỉ lấy tin nhắn của currentChatName
+        List<ChatMessage> history = db.chatDao().getMessagesByChatId(currentChatName);
 
         if (history.isEmpty()) {
-            String welcome = "Xin chào! Tôi là trợ lý AI Gemini (Flash). Tôi có thể giúp gì cho bạn? 😊";
+            // Logic tạo lời chào riêng biệt
+            String welcome;
+            if (currentChatName.equals("AI Bot Gemini")) {
+                welcome = "Xin chào! Tôi là trợ lý AI Gemini. Tôi có thể giúp gì cho bạn? 😊";
+            } else {
+                welcome = "Tôi đang có mặt tại điểm đón";
+            }
+
             addBotMessageUI(welcome);
             saveMessageToDB(welcome, false);
         } else {
@@ -91,34 +108,43 @@ public class MessageChatDetailActivity extends AppCompatActivity {
     }
 
     private void setupEvents() {
-        // Nút Back
         vqd_btn_back_chat.setOnClickListener(v -> finish());
 
-        // Nút Gửi tin nhắn
         btnSend.setOnClickListener(v -> {
             String userMessage = editTextMessage.getText().toString().trim();
-            if (userMessage.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập tin nhắn", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            if (userMessage.isEmpty()) return;
+
+            // 1. Hiện tin nhắn User
             addUserMessageUI(userMessage);
+
+            // 2. Lưu tin nhắn kèm theo TÊN NGƯỜI CHAT (currentChatName)
             saveMessageToDB(userMessage, true);
+
             editTextMessage.setText("");
-            sendMessageToGemini(userMessage);
+
+            // 3. Nếu đang chat với Gemini thì mới gọi AI trả lời
+            if (currentChatName.equals("AI Bot Gemini")) {
+                sendMessageToGemini(userMessage);
+            } else {
+                // Nếu chat với người thường (Lê Văn A), có thể giả lập trả lời tự động hoặc không làm gì
+                // Ví dụ giả lập trả lời sau 1 giây:
+                new android.os.Handler().postDelayed(() -> {
+                    String reply = "Tôi đang có mặt tải điểm đón!";
+                    addBotMessageUI(reply);
+                    saveMessageToDB(reply, false);
+                }, 1000);
+            }
         });
 
-        // --- SỰ KIỆN MỚI: Bấm nút gọi -> Chuyển sang màn hình Gọi ---
+        // Nút Gọi điện: Lưu lịch sử cuộc gọi
         if (btn_voice_call != null) {
             btn_voice_call.setOnClickListener(v -> {
-                // 1. LƯU TRẠNG THÁI: Đã thực hiện cuộc gọi
-                getSharedPreferences("ChatPrefs", MODE_PRIVATE)
-                        .edit()
-                        .putBoolean("is_call_visible", true)
-                        .apply();
+                // Thêm vào danh sách lịch sử cuộc gọi trong Database
+                AppDatabase.CallHistoryItem newItem = new AppDatabase.CallHistoryItem(currentChatName, "Vừa xong");
+                db.callHistoryDao().insertCall(newItem);
 
-                // 2. Chuyển màn hình
                 Intent intent = new Intent(MessageChatDetailActivity.this, MessageCallDetailActivity.class);
-                intent.putExtra("caller_name", chat_title.getText().toString());
+                intent.putExtra("caller_name", currentChatName);
                 startActivity(intent);
             });
         }
@@ -142,15 +168,16 @@ public class MessageChatDetailActivity extends AppCompatActivity {
             public void onFailure(Throwable t) {
                 t.printStackTrace();
                 runOnUiThread(() -> {
-                    String errorMsg = "⚠️ Lỗi hệ thống: " + t.getMessage();
-                    addBotMessageUI(errorMsg);
+                    addBotMessageUI("Lỗi kết nối AI.");
                 });
             }
         }, mainExecutor);
     }
 
+    // [SỬA ĐỔI] Hàm lưu tin nhắn giờ phải nhận thêm currentChatName
     private void saveMessageToDB(String message, boolean isUser) {
-        db.chatDao().insertMessage(new ChatMessage(message, isUser));
+        // Tạo ChatMessage với 3 tham số: nội dung, là User?, ID người chat
+        db.chatDao().insertMessage(new ChatMessage(message, isUser, currentChatName));
     }
 
     private void addUserMessageUI(String message) {

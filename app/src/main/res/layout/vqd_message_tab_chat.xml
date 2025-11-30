@@ -71,13 +71,17 @@
                 android:paddingBottom="12dp"/>
             <View android:layout_width="match_parent" android:layout_height="2dp" android:background="#00B14F"/>
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/vqd_tab_cuocgoi"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -190,11 +194,16 @@
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F5F5F5" android:layout_marginStart="78dp"/>
 
             <LinearLayout
+                android:id="@+id/vqd_item_chat_user2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
                 <androidx.cardview.widget.CardView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -206,8 +215,8 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_launcher_background" />
                 </androidx.cardview.widget.CardView>
+
                 <LinearLayout
-                    android:id="@+id/vqd_item_chat_user2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -219,15 +228,20 @@
                         android:textColor="@android:color/black"
                         android:textStyle="bold"
                         android:textSize="16sp"/>
+
                     <TextView
+                        android:id="@+id/tv_last_message_user2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ok, đợi tôi chút."
+                        android:text="Chưa có tin nhắn"
                         android:textColor="#666666"
                         android:textSize="14sp"
-                        android:layout_marginTop="4dp"/>
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
                 </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

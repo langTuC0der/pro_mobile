@@ -7,12 +7,15 @@ import androidx.room.PrimaryKey;
 public class ChatMessage {
     @PrimaryKey(autoGenerate = true)
     public int id;
-
     public String message;
-    public boolean isUser; // true: User, false: AI
+    public boolean isUser;
 
-    public ChatMessage(String message, boolean isUser) {
+    // THÊM CỘT NÀY: Để biết tin nhắn này của ai (Ví dụ: "AI Bot Gemini" hay "Lê Văn A")
+    public String chatId;
+
+    public ChatMessage(String message, boolean isUser, String chatId) {
         this.message = message;
         this.isUser = isUser;
+        this.chatId = chatId;
     }
 }

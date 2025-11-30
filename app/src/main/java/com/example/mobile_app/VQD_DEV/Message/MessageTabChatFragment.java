@@ -15,33 +15,33 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment; // Quan trọng: Dùng Fragment
+import androidx.fragment.app.Fragment;
 
 import com.example.mobile_app.R;
 
-public class MessageTabChatFragment extends Fragment { // Đổi thành Fragment
+public class MessageTabChatFragment extends Fragment {
 
     private LinearLayout vqd_tab_cuocgoi;
     private LinearLayout vqd_layout_empty;
     private ScrollView vqd_layout_chat_list;
     private TextView tv_test_trigger;
     private LinearLayout vqd_item_chat_gemini;
+    private LinearLayout vqd_item_chat_user2;
     private TextView vqd_tv_title_reset;
-    private TextView tv_last_message;
+
+    // [SỬA 1] Khai báo 2 biến riêng biệt cho 2 dòng tin nhắn cuối
+    private TextView tv_last_message_gemini;
+    private TextView tv_last_message_user2;
 
     private static final String PREFS_NAME = "ChatPrefs";
     private static final String KEY_IS_CHAT_VISIBLE = "is_chat_visible";
 
-    // Fragment dùng onCreateView để nạp giao diện
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Nạp layout xml vào
         View view = inflater.inflate(R.layout.vqd_message_tab_chat, container, false);
-
-        initViews(view); // Truyền view vào để ánh xạ
+        initViews(view);
         setupEvents();
-
         return view;
     }
 
@@ -49,39 +49,54 @@ public class MessageTabChatFragment extends Fragment { // Đổi thành Fragment
     public void onResume() {
         super.onResume();
         checkChatState();
-        updateLastMessageUI();
+        updateLastMessageUI(); // Hàm này sẽ cập nhật nội dung chat mới nhất
     }
 
-    // Phải nhận tham số View để tìm ID bên trong nó
     private void initViews(View view) {
         vqd_layout_empty = view.findViewById(R.id.vqd_layout_empty);
         vqd_layout_chat_list = view.findViewById(R.id.vqd_layout_chat_list);
         tv_test_trigger = view.findViewById(R.id.tv_test_trigger);
         vqd_item_chat_gemini = view.findViewById(R.id.vqd_item_chat_gemini);
+        vqd_item_chat_user2 = view.findViewById(R.id.vqd_item_chat_user2);
         vqd_tv_title_reset = view.findViewById(R.id.vqd_tv_title_reset);
-        tv_last_message = view.findViewById(R.id.tv_last_message);
-
         vqd_tab_cuocgoi = view.findViewById(R.id.vqd_tab_cuocgoi);
+
+        // [SỬA 2] Ánh xạ đúng ID từ file XML (Gemini dùng ID cũ, User2 dùng ID mới)
+        tv_last_message_gemini = view.findViewById(R.id.tv_last_message);
+        tv_last_message_user2 = view.findViewById(R.id.tv_last_message_user2);
     }
 
+    // [SỬA 3] Viết lại hàm này để update riêng cho từng người
     private void updateLastMessageUI() {
-        if (getContext() == null) return; // Kiểm tra an toàn
+        if (getContext() == null) return;
+        AppDatabase db = AppDatabase.getDatabase(getContext());
 
-        AppDatabase db = AppDatabase.getDatabase(getContext()); // Dùng getContext() thay vì this
-        ChatMessage lastMsg = db.chatDao().getLastMessage();
+        // Cập nhật dòng của Gemini
+        updateSingleRow(db, "AI Bot Gemini", tv_last_message_gemini);
+
+        // Cập nhật dòng của User 2 (Tên phải khớp với tên trong Intent bên dưới)
+        updateSingleRow(db, "Nguyen Van A", tv_last_message_user2);
+    }
+
+    // [HÀM HỖ TRỢ MỚI] Giúp code gọn hơn, tránh lặp lại
+    private void updateSingleRow(AppDatabase db, String chatName, TextView textView) {
+        if (textView == null) return;
+
+        // Gọi hàm DAO mới: lấy tin nhắn theo TÊN (chatId)
+        ChatMessage lastMsg = db.chatDao().getLastMessageByChatId(chatName);
 
         if (lastMsg != null) {
             String content = lastMsg.message;
             if (lastMsg.isUser) {
                 content = "Bạn: " + content;
             }
-            tv_last_message.setText(content);
-            tv_last_message.setTypeface(null, Typeface.NORMAL);
-            tv_last_message.setTextColor(0xFF666666);
+            textView.setText(content);
+            textView.setTypeface(null, Typeface.NORMAL);
+            textView.setTextColor(0xFF666666);
         } else {
-            tv_last_message.setText("Bắt đầu trò chuyện ngay!");
-            tv_last_message.setTypeface(null, Typeface.ITALIC);
-            tv_last_message.setTextColor(0xFF00B14F);
+            textView.setText("Bắt đầu trò chuyện ngay!");
+            textView.setTypeface(null, Typeface.ITALIC);
+            textView.setTextColor(0xFF00B14F);
         }
     }
 
@@ -109,8 +124,6 @@ public class MessageTabChatFragment extends Fragment { // Đổi thành Fragment
             db.chatDao().deleteAll();
 
             Toast.makeText(getContext(), "Đã Reset toàn bộ dữ liệu!", Toast.LENGTH_SHORT).show();
-
-            // Reload lại Fragment này
             getParentFragmentManager().beginTransaction().detach(this).attach(this).commit();
         });
 
@@ -121,22 +134,26 @@ public class MessageTabChatFragment extends Fragment { // Đổi thành Fragment
 
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             settings.edit().putBoolean(KEY_IS_CHAT_VISIBLE, true).apply();
-
             updateLastMessageUI();
         });
 
+        // Click vào Gemini
         vqd_item_chat_gemini.setOnClickListener(v -> {
-            // Chuyển sang Activity chi tiết thì VẪN DÙNG INTENT bình thường
             Intent intent = new Intent(getContext(), MessageChatDetailActivity.class);
             intent.putExtra("chat_name", "AI Bot Gemini");
             startActivity(intent);
         });
 
-        // 3. Sự kiện: Đang ở Chat bấm sang Cuộc Gọi
+        // Click vào Nguyen Van A
+        vqd_item_chat_user2.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), MessageChatDetailActivity.class);
+            intent.putExtra("chat_name", "Nguyen Van A"); // Tên này dùng làm ID trong Database
+            startActivity(intent);
+        });
+
         vqd_tab_cuocgoi.setOnClickListener(v -> {
             getParentFragmentManager()
                     .beginTransaction()
-                    // R.id.vqd_fragment_container là cái khung trong VqdMainActivity
                     .replace(R.id.vqd_fragment_container, new MessageTabCallFragment())
                     .commit();
         });
